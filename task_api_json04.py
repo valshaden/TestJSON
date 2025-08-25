@@ -27,12 +27,6 @@ def get_user(user_id: int):
             return user
     return {"error": "Пользователь не найден"}
 
-
-def save_users(users):
-    """Сохраняет пользователей в JSON файл"""
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users, f, ensure_ascii=False, indent=2)
-
 @app.post("/users")
 def create_user(user: dict):
     """Создает нового пользователя"""
@@ -41,6 +35,23 @@ def create_user(user: dict):
     users.append(user)
     save_users(users)
     return user
+
+@app.put("/users/{user_id}")
+def update_user(user_id: int, updated_user: dict):
+    """Обновляет пользователя по ID"""
+    users = load_users()
+    for user in users:
+        if user['id'] == user_id:
+            user.update(updated_user)
+            save_users(users)
+            return user
+    return {"error": "Пользователь не найден"}
+
+def save_users(users):
+    """Сохраняет пользователей в JSON файл"""
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(users, f, ensure_ascii=False, indent=2)
+
 
 @app.on_event("startup")
 def startup():
@@ -57,4 +68,3 @@ def startup():
 
 if __name__ == "__main__":
     uvicorn.run("task_api_json:app", host="127.0.0.1", port=8000, reload=True)
-    
