@@ -31,15 +31,10 @@ def get_user(user_id: int):
 def create_user(user: dict):
     """Создает нового пользователя"""
     users = load_users()
-    # Проверяем, что email уникальный
-    for u in users:
-        if u['email'] == user['email']:
-            return {"error": "Пользователь с таким email уже существует"}
     user['id'] = len(users) + 1
     users.append(user)
     save_users(users)
     return user
-
 
 @app.put("/users/{user_id}")
 def update_user(user_id: int, updated_user: dict):
@@ -52,7 +47,6 @@ def update_user(user_id: int, updated_user: dict):
             return user
     return {"error": "Пользователь не найден"}
 
-
 @app.delete("/users/{user_id}")
 def delete_user(user_id: int):
     """Удаляет пользователя по ID"""
@@ -64,15 +58,13 @@ def delete_user(user_id: int):
             return {"message": "Пользователь удален"}
     return {"error": "Пользователь не найден"}
 
-
-# поиск юзера по имени
-@app.get("/users/search/{name}")
+# Поиска юзера по имени
+@app.get("/users/search")
 def search_user(name: str):
     """Поиск пользователя по имени"""
     users = load_users()
-    print(1, name)
     for user in users:
-        if name.lower() in user['имя'].lower():
+        if user['имя'] == name:
             return user
     return {"error": "Пользователь не найден"}
 
@@ -80,8 +72,6 @@ def save_users(users):
     """Сохраняет пользователей в JSON файл"""
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(users, f, ensure_ascii=False, indent=2)
-
-
 
 
 @app.on_event("startup")

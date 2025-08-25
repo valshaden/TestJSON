@@ -76,13 +76,12 @@ def search_user(name: str):
             return user
     return {"error": "Пользователь не найден"}
 
+
+
 def save_users(users):
     """Сохраняет пользователей в JSON файл"""
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(users, f, ensure_ascii=False, indent=2)
-
-
-
 
 @app.on_event("startup")
 def startup():
