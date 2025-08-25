@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
 import uvicorn, json, os
 
 app = FastAPI(title="Простой CRUD с JSON")
@@ -12,11 +11,6 @@ def load_users():
 @app.get("/")
 def home():
     """Главная страница"""
-    return FileResponse("index.html")
-
-@app.get("/api")
-def api_info():
-    """API информация"""
     return {"сообщение": "Простой CRUD API", "документация": "/docs"}
 
 @app.get("/users")
@@ -32,6 +26,21 @@ def get_user(user_id: int):
         if user['id'] == user_id:
             return user
     return {"error": "Пользователь не найден"}
+
+@app.get("/stats")
+def get_stats():
+    """Возвращает статистику по пользователям"""
+    users = load_users()
+    total_users = len(users)
+    avg_age = sum(user['возраст'] for user in users) / total_users
+    youngest = min(users, key=lambda x: x['возраст'])
+    oldest = max(users, key=lambda x: x['возраст'])
+    return {
+        "total_users": total_users,
+        "avg_age": avg_age,
+        "youngest": youngest,
+        "oldest": oldest
+    }
 
 @app.post("/users")
 def create_user(user: dict):
@@ -95,20 +104,6 @@ def save_users(users):
 самый старший
 '''
 
-@app.get("/stats")
-def get_stats():
-    """Возвращает статистику по пользователям"""
-    users = load_users()
-    total_users = len(users)
-    avg_age = sum(user['возраст'] for user in users) / total_users
-    youngest = min(users, key=lambda x: x['возраст'])
-    oldest = max(users, key=lambda x: x['возраст'])
-    return {
-        "total_users": total_users,
-        "avg_age": avg_age,
-        "youngest": youngest,
-        "oldest": oldest
-    }
 
 
 

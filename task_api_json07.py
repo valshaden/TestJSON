@@ -76,7 +76,26 @@ def search_user(name: str):
             return user
     return {"error": "Пользователь не найден"}
 
-
+'''Статистика
+средний возраст
+всего пользователей
+самый молодой
+самый старший
+'''
+@app.get("/users/stats")
+def get_stats():
+    """Возвращает статистику пользователей"""
+    users = load_users()
+    total_users = len(users)
+    average_age = sum(user['возраст'] for user in users) / total_users
+    youngest_user = min(users, key=lambda x: x['возраст'])
+    oldest_user = max(users, key=lambda x: x['возраст'])
+    return {
+        "total_users": total_users,
+        "average_age": average_age,
+        "youngest_user": youngest_user,
+        "oldest_user": oldest_user
+    }
 
 def save_users(users):
     """Сохраняет пользователей в JSON файл"""
