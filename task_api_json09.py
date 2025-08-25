@@ -82,21 +82,6 @@ def search_user(name: str):
             return user
     return {"error": "Пользователь не найден"}
 
-@app.get("/stats")
-def get_stats():
-    """Статистика пользователей"""
-    users = load_users()
-    if not users:
-        return {"error": "Нет пользователей"}
-    
-    ages = [user['возраст'] for user in users]
-    return {
-        "всего_пользователей": len(users),
-        "средний_возраст": round(sum(ages) / len(ages), 1),
-        "самый_молодой": min(ages),
-        "самый_старший": max(ages)
-    }
-
 def save_users(users):
     """Сохраняет пользователей в JSON файл"""
     with open(DATA_FILE, 'w', encoding='utf-8') as f:

@@ -50,6 +50,12 @@
             <button class="btn btn-primary" onclick="loadUsers()">📋 Загрузить пользователей</button>
             <button class="btn btn-info" onclick="showAddModal()">➕ Добавить пользователя</button>
             <button class="btn btn-warning" onclick="showSearchModal()">🔍 Поиск</button>
+            <button class="btn btn-info" onclick="loadStats()">📊 Статистика</button>
+        </div>
+        
+        <div id="stats-container" style="display: none; background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; animation: fadeInUp 1s;">
+            <h3 style="margin-bottom: 15px; color: #333;">📊 Статистика пользователей</h3>
+            <div id="stats-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;"></div>
         </div>
         
         <div id="loading" class="loading" style="display: none;">
@@ -186,6 +192,42 @@
             } catch (error) {
                 alert('Ошибка поиска: ' + error.message);
             }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/stats');
+                const stats = await response.json();
+                displayStats(stats);
+            } catch (error) {
+                alert('Ошибка загрузки статистики: ' + error.message);
+            }
+        }
+
+        function displayStats(stats) {
+            const container = document.getElementById('stats-container');
+            const content = document.getElementById('stats-content');
+            
+            content.innerHTML = `
+                <div style="background: #4CAF50; color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">${stats.всего_пользователей}</div>
+                    <div>Всего пользователей</div>
+                </div>
+                <div style="background: #2196F3; color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">${stats.средний_возраст}</div>
+                    <div>Средний возраст</div>
+                </div>
+                <div style="background: #FF9800; color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">${stats.самый_молодой}</div>
+                    <div>Самый молодой</div>
+                </div>
+                <div style="background: #9C27B0; color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">${stats.самый_старший}</div>
+                    <div>Самый старший</div>
+                </div>
+            `;
+            
+            container.style.display = 'block';
         }
 
         function showAddModal() { document.getElementById('addModal').style.display = 'block'; }
